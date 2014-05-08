@@ -2,6 +2,7 @@
 *  Packetizer example
 */
 
+
 #include "Packetizer.h"
 
 
@@ -30,17 +31,18 @@ void setup()
   if (result != pz_noErr)
   {
     //error handling
-  }  
+    Serial.println("error init");
+  }
   
   // to make sure, we know the correct bufferlength
   bufferLength = slicer.getBufferSize();
-  
   //----------------------------------------
   // set start condition with string
   result = slicer.setStartCondition("start");
   if (result != pz_noErr)
   {
     //error handling
+    Serial.println("error setting start");
   }
 
   //----------------------------------------
@@ -51,6 +53,7 @@ void setup()
   if (result != pz_noErr)
   {
     //error handling
+    Serial.println("error setting end");
   }
   
   
@@ -91,6 +94,7 @@ void serialEvent() {
     if (result != pz_noErr)
     {
       //error handling
+      Serial.println("error adding data");
     } 
   }
 }
