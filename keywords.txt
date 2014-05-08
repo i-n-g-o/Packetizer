@@ -1,0 +1,43 @@
+#######################################
+# Syntax Coloring Map For Test
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+Packetizer	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+init	KEYWORD2
+setBufferSize	KEYWORD2
+getBufferSize	KEYWORD2
+getBuffer	KEYWORD2
+
+appendData	KEYWORD2
+
+setStartCondition	KEYWORD2
+getStartCondition	KEYWORD2
+getStartConditionSize	KEYWORD2
+isStartCondition	KEYWORD2
+
+setEndCondition	KEYWORD2
+getEndCondition	KEYWORD2
+getEndConditionSize	KEYWORD2
+isEndCondition	KEYWORD2
+
+onPacketStart	KEYWORD2
+onPacket	KEYWORD2
+onOverflow	KEYWORD2
+
+#######################################
+# Instances (KEYWORD2)
+#######################################
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
