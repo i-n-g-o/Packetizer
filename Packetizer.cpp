@@ -43,18 +43,18 @@ Packetizer::~Packetizer()
 // Public Methods ///////////////////////////////////////////////////////////////
 //-------------------------------------------------------------------------------
 
-char Packetizer::init(size_t _size)
+uint8_t Packetizer::init(size_t _size)
 {
 	return setBufferSize(_size);
 }
 
-char Packetizer::setBufferSize(size_t _size)
+uint8_t Packetizer::setBufferSize(size_t _size)
 {
 	// free buffer
 	freeBuffer(&m_buffer, &m_bufferSize);
 	
 	// allocate buffer
-	char result = allocateBuffer(&m_buffer, &m_bufferSize, _size);
+	uint8_t result = allocateBuffer(&m_buffer, &m_bufferSize, _size);
 
 	// reset things, erase buffer
 	resetBuffer();
@@ -66,23 +66,23 @@ char Packetizer::setBufferSize(size_t _size)
 /*
 *	append data
 */
-char Packetizer::appendData(int _data)
+uint8_t Packetizer::appendData(int _data)
 {
-	return appendData((char*)&_data, sizeof(int));
+	return appendData((uint8_t*)&_data, sizeof(int));
 }
 
-char Packetizer::appendData(long _data)
+uint8_t Packetizer::appendData(long _data)
 {
-	return appendData((char*)&_data, sizeof(long));
+	return appendData((uint8_t*)&_data, sizeof(long));
 }
 
-char Packetizer::appendData(String _data)
+uint8_t Packetizer::appendData(String _data)
 {
-	return appendData((char*)_data.c_str(), (size_t)_data.length());
+	return appendData((uint8_t*)_data.c_str(), (size_t)_data.length());
 }
 
 // append data
-char Packetizer::appendData(char* _buffer, size_t _bufferSize)
+uint8_t Packetizer::appendData(uint8_t* _buffer, size_t _bufferSize)
 {
 	if (m_buffer == 0) return pz_noBuffer;
 	if (_buffer == 0) return pz_noBuffer;
@@ -99,8 +99,8 @@ char Packetizer::appendData(char* _buffer, size_t _bufferSize)
 }
 
 
-// append one char and test conditions
-char Packetizer::appendData(char _c)
+// append one byte and test conditions
+uint8_t Packetizer::appendData(uint8_t _c)
 {
 	// safety
 	if (m_buffer == 0) return pz_noBuffer;
@@ -201,22 +201,22 @@ char Packetizer::appendData(char _c)
 /*
 *	set startcondition
 */
-char Packetizer::setStartCondition(int _data)
+uint8_t Packetizer::setStartCondition(int _data)
 {
-	return setStartCondition((char*)&_data, sizeof(int));
+	return setStartCondition((uint8_t*)&_data, sizeof(int));
 }
 
-char Packetizer::setStartCondition(long _data)
+uint8_t Packetizer::setStartCondition(long _data)
 {
-	return setStartCondition((char*)&_data, sizeof(long));
+	return setStartCondition((uint8_t*)&_data, sizeof(long));
 }
 
-char Packetizer::setStartCondition(String _data)
+uint8_t Packetizer::setStartCondition(String _data)
 {
-	return setStartCondition((char*)_data.c_str(), (size_t)_data.length());
+	return setStartCondition((uint8_t*)_data.c_str(), (size_t)_data.length());
 }
 
-char Packetizer::setStartCondition(char* _buffer, size_t _bufferSize)
+uint8_t Packetizer::setStartCondition(uint8_t* _buffer, size_t _bufferSize)
 {
 	// free buffer
 	freeBuffer(&m_startCondition, &m_startConditionSize);
@@ -230,7 +230,7 @@ char Packetizer::setStartCondition(char* _buffer, size_t _bufferSize)
 	if (_bufferSize == 0) return pz_noErr;
 
 	// allocate buffer
-	char result = allocateBuffer(&m_startCondition, &m_startConditionSize, _bufferSize);	
+	uint8_t result = allocateBuffer(&m_startCondition, &m_startConditionSize, _bufferSize);	
 	if (result != pz_noErr)
 	{
 		return result;
@@ -246,22 +246,22 @@ char Packetizer::setStartCondition(char* _buffer, size_t _bufferSize)
 /*
 *	set endcondition
 */
-char Packetizer::setEndCondition(int _data)
+uint8_t Packetizer::setEndCondition(int _data)
 {
-	return setEndCondition((char*)&_data, sizeof(int));
+	return setEndCondition((uint8_t*)&_data, sizeof(int));
 }
 
-char Packetizer::setEndCondition(long _data)
+uint8_t Packetizer::setEndCondition(long _data)
 {
-	return setEndCondition((char*)&_data, sizeof(long));
+	return setEndCondition((uint8_t*)&_data, sizeof(long));
 }
 
-char Packetizer::setEndCondition(String _data)
+uint8_t Packetizer::setEndCondition(String _data)
 {
-	return setEndCondition((char*)_data.c_str(), (size_t)_data.length());
+	return setEndCondition((uint8_t*)_data.c_str(), (size_t)_data.length());
 }
 
-char Packetizer::setEndCondition(char* _buffer, size_t _bufferSize)
+uint8_t Packetizer::setEndCondition(uint8_t* _buffer, size_t _bufferSize)
 {
 	// free end condition
 	freeBuffer(&m_endCondition, &m_endConditionSize);
@@ -274,7 +274,7 @@ char Packetizer::setEndCondition(char* _buffer, size_t _bufferSize)
 	
 	
 	// allocate buffer
-	char result = allocateBuffer(&m_endCondition, &m_endConditionSize, _bufferSize);	
+	uint8_t result = allocateBuffer(&m_endCondition, &m_endConditionSize, _bufferSize);	
 	if (result != pz_noErr)
 	{
 		return result;
@@ -295,12 +295,12 @@ void Packetizer::onPacketStart( void (*function)(void) )
 	user_onStart = function;
 }
 
-void Packetizer::onPacket( void (*function)(char*, size_t) )
+void Packetizer::onPacket( void (*function)(uint8_t*, size_t) )
 {
 	user_onPacket = function;
 }
 
-void Packetizer::onOverflow( void (*function)(char*, size_t) )
+void Packetizer::onOverflow( void (*function)(uint8_t*, size_t) )
 {
 	user_onOverflow = function;
 }
@@ -328,7 +328,7 @@ void Packetizer::initVars()
 }
 
 
-void Packetizer::freeBuffer(char** _buffer, size_t* _bufferSize)
+void Packetizer::freeBuffer(uint8_t** _buffer, size_t* _bufferSize)
 {
 	// free buffer if allocated
 	if (*_buffer != 0) {
@@ -340,14 +340,14 @@ void Packetizer::freeBuffer(char** _buffer, size_t* _bufferSize)
 }
 
 
-char Packetizer::allocateBuffer(char** _buffer, size_t* _bufferSize, size_t _size)
+uint8_t Packetizer::allocateBuffer(uint8_t** _buffer, size_t* _bufferSize, size_t _size)
 {
 	// safety
 	if (_size == 0) return pz_bufferSize;
 		
 	
 	// allocate buffer
-	*_buffer = (char*)malloc(_size);
+	*_buffer = (uint8_t*)malloc(_size);
   
   	// test
 	if (*_buffer == 0) {

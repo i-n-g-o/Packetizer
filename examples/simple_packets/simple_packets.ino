@@ -13,7 +13,7 @@ Packetizer slicer;
 size_t bufferLength;
 
 // result, use for error handling
-char result;
+uint8_t result;
 
 
 
@@ -46,8 +46,8 @@ void setup()
   }
 
   //----------------------------------------
-  // set end condition with char-array
-  char b[] = {13, 10};
+  // set end condition with byte-array
+  uint8_t b[] = {13, 10};
   result = slicer.setEndCondition(b, sizeof(b));
 //  result = slicer.setEndCondition("end");
   if (result != pz_noErr)
@@ -87,15 +87,23 @@ void loop()
 void serialEvent() {
   while (Serial.available()) {
     // get the new byte:
-    char inChar = (char)Serial.read(); 
     
-    // append data to slicer
-    result = slicer.appendData(inChar);
-    if (result != pz_noErr)
-    {
-      //error handling
-      Serial.println("error adding data");
-    } 
+    int inVal = Serial.read();
+    
+    if (inVal > -1)
+    {      
+      // append data to slicer
+      result = slicer.appendData((uint8_t)inVal);
+      if (result != pz_noErr)
+      {
+        //error handling
+        Serial.println("error adding data");
+      } 
+    }
+    
+    
+    
+    
   }
 }
 
@@ -113,12 +121,12 @@ void myOnPacketStart()
 //----------------------------------------
 // callback for messages
 //----------------------------------------
-void myOnPacket(char* _buffer, size_t _bufferSize)
+void myOnPacket(uint8_t* _buffer, size_t _bufferSize)
 {
   // buffer is caller-owned
   // copy data if you need it later
   Serial.println("packet:");
-  Serial.write((const uint8_t*)_buffer, _bufferSize);
+  Serial.write(_buffer, _bufferSize);
   Serial.println();
 }
 
@@ -126,11 +134,11 @@ void myOnPacket(char* _buffer, size_t _bufferSize)
 //----------------------------------------
 // callback for buffer-oberflow
 //----------------------------------------
-void myOnOverflow(char* _buffer, size_t _bufferSize)
+void myOnOverflow(uint8_t* _buffer, size_t _bufferSize)
 {
   // buffer is caller-owned
   // copy data, if you need it later
   Serial.println("overflow:");
-  Serial.write((const uint8_t*)_buffer, _bufferSize);
+  Serial.write(_buffer, _bufferSize);
   Serial.println();  
 }
