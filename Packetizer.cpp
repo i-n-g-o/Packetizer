@@ -116,9 +116,10 @@ uint8_t Packetizer::appendData(uint8_t _c)
 			if(++m_startIndex >= m_startConditionSize)
 			{
 				// startcondition found
-				// we always start at 0
+				// we always start at index 0
 				m_index = 0;
-				
+				m_endIndex = 0;
+				m_startIndex = 0;				
 				m_startFound = true;
 				
 				if (user_onStart)
@@ -135,7 +136,7 @@ uint8_t Packetizer::appendData(uint8_t _c)
 		if (!m_startFound) return pz_noErr;
 	}
 	
-	
+
 	// add data to our buffer
 	m_buffer[m_index] = _c;
 	
@@ -168,7 +169,7 @@ uint8_t Packetizer::appendData(uint8_t _c)
 					//call user method
 					user_onPacket(m_buffer, len);
 				}
-			
+				
 				// reset index
 				m_index = 0;
 				m_endIndex = 0;
