@@ -33,6 +33,11 @@ onPacketStart	KEYWORD2
 onPacket	KEYWORD2
 onOverflow	KEYWORD2
 
+pz_noErr	KEYWORD2
+pz_noBuffer	KEYWORD2
+pz_bufferSize	KEYWORD2
+
+
 #######################################
 # Instances (KEYWORD2)
 #######################################
