@@ -288,6 +288,21 @@ uint8_t Packetizer::setEndCondition(uint8_t* _buffer, size_t _bufferSize)
 }
 
 
+void Packetizer::sendStartCondition(Print& _print)
+{
+    if (m_startConditionSize > 0) {
+        _print.write(m_startCondition, m_startConditionSize);
+    }
+}
+
+void Packetizer::sendEndCondition(Print& _print)
+{
+    if (m_endConditionSize > 0) {
+        _print.write(m_endCondition, m_endConditionSize);
+    }
+}
+
+
 //-------------------------------------------------------------------------------
 // Callback functions
 //-------------------------------------------------------------------------------

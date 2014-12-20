@@ -81,6 +81,9 @@ public:
   size_t getEndConditionSize() { return m_endConditionSize; };  
   bool isEndCondition() { return m_endConditionSize > 0; };
   
+  void sendStartCondition(Print& _print);
+  void sendEndCondition(Print& _print);
+    
   // user callbacks
   void onPacketStart( void (*)(void) );
   void onPacket( void (*)(uint8_t*, size_t) );
