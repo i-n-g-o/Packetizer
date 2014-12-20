@@ -37,21 +37,17 @@ void draw() {
     
     if (!overRect) {
       sendByteInPacket(100);
+      overRect = true;
     }
-   
-    overRect = true;
-    
-  } 
-  else {                        // If mouse is not over square,
+  } else {                        // If mouse is not over square,
     fill(0);                      // change color and
     
     if (overRect) {
       sendByteInPacket(101);
+      overRect = false;
     }
-    
-    overRect = false;
-    
   }
+  
   rect(50, 50, 100, 100);         // Draw a square
 }
 
