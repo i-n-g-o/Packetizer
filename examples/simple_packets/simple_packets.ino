@@ -2,7 +2,6 @@
 *  Packetizer example
 */
 
-
 #include "Packetizer.h"
 
 
@@ -10,10 +9,10 @@
 Packetizer slicer;
 
 // bufferlength of packetizer
-size_t bufferLength;
+unsigned int bufferLength;
 
 // result, use for error handling
-uint8_t result;
+byte result;
 
 
 
@@ -99,11 +98,7 @@ void serialEvent() {
         //error handling
         Serial.println("error adding data");
       } 
-    }
-    
-    
-    
-    
+    }    
   }
 }
 
@@ -121,7 +116,7 @@ void myOnPacketStart()
 //----------------------------------------
 // callback for messages
 //----------------------------------------
-void myOnPacket(uint8_t* _buffer, size_t _bufferSize)
+void myOnPacket(byte* _buffer, unsigned int _bufferSize)
 {
   // buffer is caller-owned
   // copy data if you need it later
@@ -134,7 +129,7 @@ void myOnPacket(uint8_t* _buffer, size_t _bufferSize)
 //----------------------------------------
 // callback for buffer-oberflow
 //----------------------------------------
-void myOnOverflow(uint8_t* _buffer, size_t _bufferSize)
+void myOnOverflow(byte* _buffer, unsigned int _bufferSize)
 {
   // buffer is caller-owned
   // copy data, if you need it later
