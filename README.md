@@ -8,7 +8,7 @@ Examples for Arduino show the use with incoming serial data:
 |Example | demonstrates
 |------|----------
 |simple_packets | show basic functionality of Packetizer
-|simple_proto_send_receive |  the use to control another remote Arduino\ncontrols LED 13 on a remote Arduino
+|simple_proto_send_receive |  the use to control another remote Arduino<br>controls LED 13 on a remote Arduino
 
 simple_packets:
 - show basic functionality of Packetizer
