@@ -19,15 +19,26 @@
 
 #include <inttypes.h>
 #include <stdio.h> // for size_t
+#include <stdlib.h>
 
+
+#ifdef ARDUINO
+
+// include arduino stuff
 #include "WString.h"
-
-
 
 #if ARDUINO >= 100
  #include "Arduino.h"
 #else
  #include "WProgram.h"
+#endif
+
+#else
+
+// not arduino
+#include <string>
+typedef std::string String;
+
 #endif
 
 
@@ -81,8 +92,10 @@ public:
   size_t getEndConditionSize() { return m_endConditionSize; };  
   bool isEndCondition() { return m_endConditionSize > 0; };
   
+#ifdef ARDUINO
   void sendStartCondition(Print& _print);
   void sendEndCondition(Print& _print);
+#endif
     
   // user callbacks
   void onPacketStart( void (*)(void) );

@@ -288,6 +288,10 @@ uint8_t Packetizer::setEndCondition(uint8_t* _buffer, size_t _bufferSize)
 }
 
 
+//-------------------------------------------------------------------------------
+// send start and end condition
+//-------------------------------------------------------------------------------
+#ifdef ARDUINO
 void Packetizer::sendStartCondition(Print& _print)
 {
     if (m_startConditionSize > 0) {
@@ -301,6 +305,7 @@ void Packetizer::sendEndCondition(Print& _print)
         _print.write(m_endCondition, m_endConditionSize);
     }
 }
+#endif
 
 
 //-------------------------------------------------------------------------------
