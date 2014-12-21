@@ -5,7 +5,7 @@ Packetizer is a class to analyze data for a start and/or end condition. If both,
 
 Examples for Arduino show the use with incoming serial data:
 
-|Type | Elements
+|Example | 
 |------|----------
 |simple_packets | show basic functionality of Packetizer
 |Prose | vla
