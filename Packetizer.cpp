@@ -78,7 +78,12 @@ uint8_t Packetizer::appendData(long _data)
 
 uint8_t Packetizer::appendData(String _data)
 {
+#ifdef __RFduino__
+	// Stupidly, RFDuino's copy of String uses cstr() instead of c_str()
+	return appendData((uint8_t*)_data.cstr(), (size_t)_data.length());
+#else
 	return appendData((uint8_t*)_data.c_str(), (size_t)_data.length());
+#endif
 }
 
 // append data
@@ -214,7 +219,12 @@ uint8_t Packetizer::setStartCondition(long _data)
 
 uint8_t Packetizer::setStartCondition(String _data)
 {
+#ifdef __RFduino__
+	// Stupidly, RFDuino's copy of String uses cstr() instead of c_str()
+	return setStartCondition((uint8_t*)_data.cstr(), (size_t)_data.length());
+#else
 	return setStartCondition((uint8_t*)_data.c_str(), (size_t)_data.length());
+#endif
 }
 
 uint8_t Packetizer::setStartCondition(uint8_t* _buffer, size_t _bufferSize)
@@ -259,7 +269,12 @@ uint8_t Packetizer::setEndCondition(long _data)
 
 uint8_t Packetizer::setEndCondition(String _data)
 {
+#ifdef __RFduino__
+	// Stupidly, RFDuino's copy of String uses cstr() instead of c_str()
+	return setEndCondition((uint8_t*)_data.cstr(), (size_t)_data.length());
+#else
 	return setEndCondition((uint8_t*)_data.c_str(), (size_t)_data.length());
+#endif
 }
 
 uint8_t Packetizer::setEndCondition(uint8_t* _buffer, size_t _bufferSize)
