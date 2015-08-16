@@ -22,6 +22,8 @@
 Packetizer::Packetizer()
 {
 	initVars();
+	// init with default size of 32
+	init(32);
 }
 
 Packetizer::Packetizer(size_t _size)
@@ -110,6 +112,8 @@ uint8_t Packetizer::appendData(uint8_t _c)
 	// safety
 	if (m_buffer == 0) return pz_noBuffer;
 	
+	m_packetEnd = -1;
+	
 	if (m_startConditionSize > 0)
 	{
 		// search for start...
@@ -127,8 +131,7 @@ uint8_t Packetizer::appendData(uint8_t _c)
 				m_startIndex = 0;				
 				m_startFound = true;
 				
-				if (user_onStart)
-				{
+				if (user_onStart) {
 					user_onStart();
 				}
 				
@@ -160,19 +163,18 @@ uint8_t Packetizer::appendData(uint8_t _c)
 		{
 			if(++m_endIndex >= m_endConditionSize)
 			{
-				// we found an end... call user-method
-				if (user_onPacket)
-				{
-					size_t len = 0;
-					
-					// calculate len only if it will be >0
-					if ( m_index >= m_endConditionSize)
-					{
-						len = m_index + 1 - m_endConditionSize;
-					}
-					
-					//call user method
-					user_onPacket(m_buffer, len);
+				// we found an end
+				m_packetEnd = 0;
+				
+				// calculate len only if it will be >0
+				if ( m_index >= m_endConditionSize) {
+					m_packetEnd = m_index + 1 - m_endConditionSize;
+				}
+				
+				
+				// call user-method if any
+				if (user_onPacket) {
+					user_onPacket(m_buffer, m_packetEnd);
 				}
 				
 				// reset index
@@ -194,8 +196,7 @@ uint8_t Packetizer::appendData(uint8_t _c)
 		m_index = 0;
 		
 		//call overflow...
-		if (user_onOverflow)
-		{
+		if (user_onOverflow) {
 			user_onOverflow(m_buffer, m_bufferSize);
 		}
 	}

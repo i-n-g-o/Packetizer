@@ -28,9 +28,9 @@
 #include "WString.h"
 
 #if ARDUINO >= 100
- #include "Arduino.h"
+	#include "Arduino.h"
 #else
- #include "WProgram.h"
+	#include "WProgram.h"
 #endif
 
 #else
@@ -44,9 +44,9 @@ typedef std::string String;
 
 enum packetizer_errors
 {
-  pz_noErr = 0,
-  pz_noBuffer,
-  pz_bufferSize
+	pz_noErr = 0,
+	pz_noBuffer,
+	pz_bufferSize
 };
 
 
@@ -55,82 +55,86 @@ enum packetizer_errors
 class Packetizer
 {
 public:
-  Packetizer();
-  Packetizer(size_t);  
-  ~Packetizer();
-  
-  
-  // buffer
-  uint8_t init(size_t);
-  uint8_t setBufferSize(size_t);  
-  size_t getBufferSize() { return m_bufferSize; };
-  uint8_t* getBuffer() { return m_buffer; };
-  
-  // append data
-  uint8_t appendData(int);
-  uint8_t appendData(long);
-  uint8_t appendData(String);
-  uint8_t appendData(uint8_t);
-  uint8_t appendData(uint8_t*, size_t);
-  
-  
-  // start condition
-  uint8_t setStartCondition(int);
-  uint8_t setStartCondition(long);
-  uint8_t setStartCondition(String);
-  uint8_t setStartCondition(uint8_t*, size_t);
-  uint8_t* getStartCondition() { return m_startCondition; };
-  size_t getStartConditionSize() { return m_startConditionSize; };  
-  bool isStartCondition() { return m_startConditionSize > 0; };
-  
-  // end condition
-  uint8_t setEndCondition(int);
-  uint8_t setEndCondition(long);
-  uint8_t setEndCondition(String);
-  uint8_t setEndCondition(uint8_t*, size_t);
-  uint8_t* getEndCondition() { return m_endCondition; };
-  size_t getEndConditionSize() { return m_endConditionSize; };  
-  bool isEndCondition() { return m_endConditionSize > 0; };
-  
-#ifdef ARDUINO
-  void sendStartCondition(Print& _print);
-  void sendEndCondition(Print& _print);
-#endif
-    
-  // user callbacks
-  void onPacketStart( void (*)(void) );
-  void onPacket( void (*)(uint8_t*, size_t) );
-  void onOverflow( void (*)(uint8_t*, size_t) );
+	Packetizer(); // init with default internal buffersize of 32
+	Packetizer(size_t); // init with custom buffer size
+	~Packetizer();
+
+
+	// buffer
+	uint8_t init(size_t);
+	uint8_t setBufferSize(size_t);  
+	size_t getBufferSize() { return m_bufferSize; };
+	uint8_t* getBuffer() { return m_buffer; };
+
+	// get packet end
+	int getPacketEnd() { return m_packetEnd; };
+
+	// append data
+	uint8_t appendData(int);
+	uint8_t appendData(long);
+	uint8_t appendData(String);
+	uint8_t appendData(uint8_t);
+	uint8_t appendData(uint8_t*, size_t);
+
+
+	// start condition
+	uint8_t setStartCondition(int);
+	uint8_t setStartCondition(long);
+	uint8_t setStartCondition(String);
+	uint8_t setStartCondition(uint8_t*, size_t);
+	uint8_t* getStartCondition() { return m_startCondition; };
+	size_t getStartConditionSize() { return m_startConditionSize; };  
+	bool isStartCondition() { return m_startConditionSize > 0; };
+
+	// end condition
+	uint8_t setEndCondition(int);
+	uint8_t setEndCondition(long);
+	uint8_t setEndCondition(String);
+	uint8_t setEndCondition(uint8_t*, size_t);
+	uint8_t* getEndCondition() { return m_endCondition; };
+	size_t getEndConditionSize() { return m_endConditionSize; };  
+	bool isEndCondition() { return m_endConditionSize > 0; };
+
+	#ifdef ARDUINO
+	void sendStartCondition(Print& _print);
+	void sendEndCondition(Print& _print);
+	#endif
+
+	// user callbacks
+	void onPacketStart( void (*)(void) );
+	void onPacket( void (*)(uint8_t*, size_t) );
+	void onOverflow( void (*)(uint8_t*, size_t) );
 
 
 private:
-  void initVars();
-  void freeBuffer(uint8_t**, size_t*);
-  uint8_t allocateBuffer(uint8_t**, size_t*, size_t);
-  void resetBuffer();
-  
-  // buffer
-  uint8_t*   m_buffer;
-  size_t   m_bufferSize;
-  
-  size_t   m_index; // current index for writing
-  bool   m_startFound;
+	void initVars();
+	void freeBuffer(uint8_t**, size_t*);
+	uint8_t allocateBuffer(uint8_t**, size_t*, size_t);
+	void resetBuffer();
+
+	// buffer
+	uint8_t*   m_buffer;
+	size_t     m_bufferSize;
+	int	     m_packetEnd;
+
+	size_t   m_index; // current index for writing
+	bool   m_startFound;
 
 
-  // start condition
-  uint8_t*  m_startCondition;
-  size_t  m_startConditionSize;
-  size_t  m_startIndex;
-  
-  // end condition
-  uint8_t*  m_endCondition;
-  size_t  m_endConditionSize;
-  size_t  m_endIndex;
-  
-  // callbacks
-  void (*user_onStart)(void);
-  void (*user_onPacket)(uint8_t*, size_t);
-  void (*user_onOverflow)(uint8_t*, size_t);
+	// start condition
+	uint8_t*  m_startCondition;
+	size_t  m_startConditionSize;
+	size_t  m_startIndex;
+
+	// end condition
+	uint8_t*  m_endCondition;
+	size_t  m_endConditionSize;
+	size_t  m_endIndex;
+
+	// callbacks
+	void (*user_onStart)(void);
+	void (*user_onPacket)(uint8_t*, size_t);
+	void (*user_onOverflow)(uint8_t*, size_t);
 
 };
 
