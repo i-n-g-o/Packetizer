@@ -358,6 +358,7 @@ void Packetizer::initVars()
 	m_endCondition = 0;
 	m_endConditionSize = 0;
 	m_endIndex = 0;
+	m_packetEnd = -1;
 	
 	user_onStart = 0;
 	user_onPacket = 0;
