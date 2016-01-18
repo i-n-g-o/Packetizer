@@ -2,6 +2,7 @@
 *	Packetizer.cpp
 *
 *	Packetizer to analyze data for start and end condition
+*	https://github.com/i-n-g-o/Packetizer
 *	
 *	written by: Ingo Randolf - 2014
 *
