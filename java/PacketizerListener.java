@@ -14,9 +14,6 @@
 *-------------------------------------------------------------------------------*/
 package org.packetizer;
 
-/**
- * Created by inx on 13/01/16.
- */
 public interface PacketizerListener {
 
     public void onPacketStart();
