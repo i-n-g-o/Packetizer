@@ -13,7 +13,7 @@
 *   version 2.1 of the License, or (at your option) any later version.
 *-------------------------------------------------------------------------------*/
 
-package plugins.units.data.bytes;
+package org.packetizer;
 
 /**
  * Created by inx on 13/01/16.
