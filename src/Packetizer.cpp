@@ -209,6 +209,11 @@ uint8_t Packetizer::appendData(uint8_t _c)
 /*
 *	set startcondition
 */
+uint8_t Packetizer::setStartCondition(uint8_t _data)
+{
+	return setStartCondition((uint8_t*)&_data, sizeof(uint8_t));
+}
+
 uint8_t Packetizer::setStartCondition(int _data)
 {
 	return setStartCondition((uint8_t*)&_data, sizeof(int));
@@ -259,6 +264,11 @@ uint8_t Packetizer::setStartCondition(uint8_t* _buffer, size_t _bufferSize)
 /*
 *	set endcondition
 */
+uint8_t Packetizer::setEndCondition(uint8_t _data)
+{
+	return setEndCondition((uint8_t*)&_data, sizeof(uint8_t));
+}
+
 uint8_t Packetizer::setEndCondition(int _data)
 {
 	return setEndCondition((uint8_t*)&_data, sizeof(int));

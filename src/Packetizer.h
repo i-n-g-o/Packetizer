@@ -1,19 +1,18 @@
 /*//-------------------------------------------------------------------------------
-*	Packetizer.h
+*  Packetizer.h
 *
-*	Header file for Packetizer
-*	https://github.com/i-n-g-o/Packetizer
+*  Header file for Packetizer
 *  
-*	written by: Ingo Randolf - 2014
+*  written by: Ingo Randolf - 2014
 *
 *
-*	This library is free software; you can redistribute it and/or
-*	modify it under the terms of the GNU Lesser General Public
-*	License as published by the Free Software Foundation; either
-*	version 2.1 of the License, or (at your option) any later version.
+*  This library is free software; you can redistribute it and/or
+*  modify it under the terms of the GNU Lesser General Public
+*  License as published by the Free Software Foundation; either
+*  version 2.1 of the License, or (at your option) any later version.
 //-------------------------------------------------------------------------------*/
 
-// ensure this library description is only included once
+
 #ifndef Packetizer_h
 #define Packetizer_h
 
@@ -79,6 +78,7 @@ public:
 
 
 	// start condition
+	uint8_t setStartCondition(uint8_t);
 	uint8_t setStartCondition(int);
 	uint8_t setStartCondition(long);
 	uint8_t setStartCondition(String);
@@ -88,6 +88,7 @@ public:
 	bool isStartCondition() { return m_startConditionSize > 0; };
 
 	// end condition
+	uint8_t setEndCondition(uint8_t);
 	uint8_t setEndCondition(int);
 	uint8_t setEndCondition(long);
 	uint8_t setEndCondition(String);
