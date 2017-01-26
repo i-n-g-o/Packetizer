@@ -1,21 +1,19 @@
-/*//-------------------------------------------------------------------------------
+/*
 *	Packetizer.cpp
 *
 *	Packetizer to analyze data for start and end condition
 *	https://github.com/i-n-g-o/Packetizer
 *	
-*	written by: Ingo Randolf - 2014
-*
+*	written by: Ingo Randolf
 *
 *	This library is free software; you can redistribute it and/or
 *	modify it under the terms of the GNU Lesser General Public
 *	License as published by the Free Software Foundation; either
 *	version 2.1 of the License, or (at your option) any later version.
-//-------------------------------------------------------------------------------*/
+*/
 
 
 #include "Packetizer.h"
-
 
 //-------------------------------------------------------------------------------
 // Constructor //////////////////////////////////////////////////////////////////
@@ -23,7 +21,6 @@
 Packetizer::Packetizer()
 {
 	initVars();
-	// init with default size of 32
 	init(32);
 }
 
@@ -32,7 +29,6 @@ Packetizer::Packetizer(size_t _size)
 	initVars();
 	init(_size);
 }
-
 
 Packetizer::~Packetizer()
 {
@@ -45,52 +41,48 @@ Packetizer::~Packetizer()
 //-------------------------------------------------------------------------------
 // Public Methods ///////////////////////////////////////////////////////////////
 //-------------------------------------------------------------------------------
-
-uint8_t Packetizer::init(size_t _size)
+pktz_err Packetizer::init(size_t _size)
 {
 	return setBufferSize(_size);
 }
 
-uint8_t Packetizer::setBufferSize(size_t _size)
+pktz_err Packetizer::setBufferSize(size_t _size)
 {
-	// free buffer
 	freeBuffer(&m_buffer, &m_bufferSize);
 	
-	// allocate buffer
-	uint8_t result = allocateBuffer(&m_buffer, &m_bufferSize, _size);
+	pktz_err result = allocateBuffer(&m_buffer, &m_bufferSize, _size);
 
-	// reset things, erase buffer
 	resetBuffer();
 	
 	return result;
 }
 
 
-/*
-*	append data
-*/
-uint8_t Packetizer::appendData(int _data)
+//-------------------------------------------------------------------------------
+// append data
+//-------------------------------------------------------------------------------
+pktz_err Packetizer::appendData(int data)
 {
-	return appendData((uint8_t*)&_data, sizeof(int));
+	return appendData((uint8_t*)&data, sizeof(int));
 }
 
-uint8_t Packetizer::appendData(long _data)
+pktz_err Packetizer::appendData(long data)
 {
-	return appendData((uint8_t*)&_data, sizeof(long));
+	return appendData((uint8_t*)&data, sizeof(long));
 }
 
-uint8_t Packetizer::appendData(String _data)
+pktz_err Packetizer::appendData(String data)
 {
 #ifdef __RFduino__
 	// Stupidly, RFDuino's copy of String uses cstr() instead of c_str()
-	return appendData((uint8_t*)_data.cstr(), (size_t)_data.length());
+	return appendData((uint8_t*)data.cstr(), (size_t)data.length());
 #else
-	return appendData((uint8_t*)_data.c_str(), (size_t)_data.length());
+	return appendData((uint8_t*)data.c_str(), (size_t)data.length());
 #endif
 }
 
 // append data
-uint8_t Packetizer::appendData(uint8_t* _buffer, size_t _bufferSize)
+pktz_err Packetizer::appendData(uint8_t* _buffer, size_t _bufferSize)
 {
 	if (m_buffer == 0) return pz_noBuffer;
 	if (_buffer == 0) return pz_noBuffer;
@@ -98,8 +90,7 @@ uint8_t Packetizer::appendData(uint8_t* _buffer, size_t _bufferSize)
 	
 	
 	unsigned int i;
-	for (i=0; i<_bufferSize; i++)
-	{
+	for (i=0; i<_bufferSize; i++) {
 		appendData(_buffer[i]);
 	}
 	
@@ -107,24 +98,28 @@ uint8_t Packetizer::appendData(uint8_t* _buffer, size_t _bufferSize)
 }
 
 
+//-------------------------------------------------------------------------------
 // append one byte and test conditions
-uint8_t Packetizer::appendData(uint8_t _c)
+pktz_err Packetizer::appendData(uint8_t data)
 {
-	// safety
 	if (m_buffer == 0) return pz_noBuffer;
 	
-	m_packetEnd = -1;
+	m_packetLen = -1;
 	
-	if (m_startConditionSize > 0)
-	{
-		// search for start...
-		if (_c != m_startCondition[m_startIndex])
+	// look for startcondition
+	if (m_startConditionSize > 0) {
+		
+		// if incoming byte does not match current startCondition byte
+		// reset startIndex and continue
+		if (data != m_startCondition[m_startIndex]) {
 			m_startIndex = 0;
+		}
+		
+		// check if incoming byte matches startCondition byte
+		if (data == m_startCondition[m_startIndex]) {
 			
-		if (_c == m_startCondition[m_startIndex])
-		{
-			if(++m_startIndex >= m_startConditionSize)
-			{
+			if (++m_startIndex >= m_startConditionSize) {
+				
 				// startcondition found
 				// we always start at index 0
 				m_index = 0;
@@ -136,46 +131,37 @@ uint8_t Packetizer::appendData(uint8_t _c)
 					user_onStart();
 				}
 				
-				// dont add caracter to buffer
+				// don't add character to buffer
 				return pz_noErr;
 			}
 		}
 		
-		
 		if (!m_startFound) return pz_noErr;
 	}
 	
-
 	// add data to our buffer
-	m_buffer[m_index] = _c;
+	m_buffer[m_index] = data;
 	
-	
-	//------------------------------------------------
-	// start was found or no startcondition was set
-	
-	if (m_endConditionSize > 0)
-	{	
-		// look for endcondition...		
-		if (_c != m_endCondition[m_endIndex])
+	// continue to look for end condition
+	if (m_endConditionSize > 0) {
+		
+		// if incoming byte does not match current endCondition byte
+		// reset startIndex and continue
+		if (data != m_endCondition[m_endIndex]) {
 			m_endIndex = 0;
+		}
 		
+		// check if incoming byte matches endCondition byte
+		if (data == m_endCondition[m_endIndex]) {
+			
+			if (++m_endIndex >= m_endConditionSize) {
+				
+				// we found the end, calculate the length
+				m_packetLen = m_index + 1 - m_endConditionSize;
 		
-		if (_c == m_endCondition[m_endIndex])
-		{
-			if(++m_endIndex >= m_endConditionSize)
-			{
-				// we found an end
-				m_packetEnd = 0;
-				
-				// calculate len only if it will be >0
-				if ( m_index >= m_endConditionSize) {
-					m_packetEnd = m_index + 1 - m_endConditionSize;
-				}
-				
-				
 				// call user-method if any
 				if (user_onPacket) {
-					user_onPacket(m_buffer, m_packetEnd);
+					user_onPacket(m_buffer, m_packetLen);
 				}
 				
 				// reset index
@@ -189,57 +175,53 @@ uint8_t Packetizer::appendData(uint8_t _c)
 		}
 	}
 	
-
-	// increment writing index
-	if (++m_index >= m_bufferSize)
-	{
+	// increment writing index and check for overflow
+	if (++m_index >= m_bufferSize) {
+		
 		// reset index	
 		m_index = 0;
 		
-		//call overflow...
+		// call overflow...
 		if (user_onOverflow) {
 			user_onOverflow(m_buffer, m_bufferSize);
 		}
 	}
 	
-	return pz_noErr;	
+	return pz_noErr;
 }
 
 
-/*
-*	set startcondition
-*/
-uint8_t Packetizer::setStartCondition(uint8_t _data)
+//-------------------------------------------------------------------------------
+// start condition
+//-------------------------------------------------------------------------------
+pktz_err Packetizer::setStartCondition(uint8_t data)
 {
-	return setStartCondition((uint8_t*)&_data, sizeof(uint8_t));
+	return setStartCondition((uint8_t*)&data, sizeof(uint8_t));
 }
 
-uint8_t Packetizer::setStartCondition(int _data)
+pktz_err Packetizer::setStartCondition(int data)
 {
-	return setStartCondition((uint8_t*)&_data, sizeof(int));
+	return setStartCondition((uint8_t*)&data, sizeof(int));
 }
 
-uint8_t Packetizer::setStartCondition(long _data)
+pktz_err Packetizer::setStartCondition(long data)
 {
-	return setStartCondition((uint8_t*)&_data, sizeof(long));
+	return setStartCondition((uint8_t*)&data, sizeof(long));
 }
 
-uint8_t Packetizer::setStartCondition(String _data)
+pktz_err Packetizer::setStartCondition(String data)
 {
 #ifdef __RFduino__
 	// Stupidly, RFDuino's copy of String uses cstr() instead of c_str()
-	return setStartCondition((uint8_t*)_data.cstr(), (size_t)_data.length());
+	return setStartCondition((uint8_t*)data.cstr(), (size_t)data.length());
 #else
-	return setStartCondition((uint8_t*)_data.c_str(), (size_t)_data.length());
+	return setStartCondition((uint8_t*)data.c_str(), (size_t)data.length());
 #endif
 }
 
-uint8_t Packetizer::setStartCondition(uint8_t* _buffer, size_t _bufferSize)
+pktz_err Packetizer::setStartCondition(uint8_t* _buffer, size_t _bufferSize)
 {
-	// free buffer
 	freeBuffer(&m_startCondition, &m_startConditionSize);
-	
-	// reset
 	m_startIndex = 0;
 	m_startFound = false;
 	
@@ -248,11 +230,8 @@ uint8_t Packetizer::setStartCondition(uint8_t* _buffer, size_t _bufferSize)
 	if (_bufferSize == 0) return pz_noErr;
 
 	// allocate buffer
-	uint8_t result = allocateBuffer(&m_startCondition, &m_startConditionSize, _bufferSize);	
-	if (result != pz_noErr)
-	{
-		return result;
-	}
+	pktz_err result = allocateBuffer(&m_startCondition, &m_startConditionSize, _bufferSize);
+	if (result != pz_noErr) return result;
 	
 	// copy bytes
 	memcpy(m_startCondition, _buffer, _bufferSize);
@@ -261,52 +240,46 @@ uint8_t Packetizer::setStartCondition(uint8_t* _buffer, size_t _bufferSize)
 }
 
 
-/*
-*	set endcondition
-*/
-uint8_t Packetizer::setEndCondition(uint8_t _data)
+//-------------------------------------------------------------------------------
+// end condition
+//-------------------------------------------------------------------------------
+pktz_err Packetizer::setEndCondition(uint8_t data)
 {
-	return setEndCondition((uint8_t*)&_data, sizeof(uint8_t));
+	return setEndCondition((uint8_t*)&data, sizeof(uint8_t));
 }
 
-uint8_t Packetizer::setEndCondition(int _data)
+pktz_err Packetizer::setEndCondition(int data)
 {
-	return setEndCondition((uint8_t*)&_data, sizeof(int));
+	return setEndCondition((uint8_t*)&data, sizeof(int));
 }
 
-uint8_t Packetizer::setEndCondition(long _data)
+pktz_err Packetizer::setEndCondition(long data)
 {
-	return setEndCondition((uint8_t*)&_data, sizeof(long));
+	return setEndCondition((uint8_t*)&data, sizeof(long));
 }
 
-uint8_t Packetizer::setEndCondition(String _data)
+pktz_err Packetizer::setEndCondition(String data)
 {
 #ifdef __RFduino__
 	// Stupidly, RFDuino's copy of String uses cstr() instead of c_str()
-	return setEndCondition((uint8_t*)_data.cstr(), (size_t)_data.length());
+	return setEndCondition((uint8_t*)data.cstr(), (size_t)data.length());
 #else
-	return setEndCondition((uint8_t*)_data.c_str(), (size_t)_data.length());
+	return setEndCondition((uint8_t*)data.c_str(), (size_t)data.length());
 #endif
 }
 
-uint8_t Packetizer::setEndCondition(uint8_t* _buffer, size_t _bufferSize)
+pktz_err Packetizer::setEndCondition(uint8_t* _buffer, size_t _bufferSize)
 {
-	// free end condition
 	freeBuffer(&m_endCondition, &m_endConditionSize);
-	// reset
 	m_endIndex = 0;
 	
 	// safety
 	if (_buffer == 0) return pz_noErr;
 	if (_bufferSize == 0) return pz_noErr;
 	
-	
 	// allocate buffer
-	uint8_t result = allocateBuffer(&m_endCondition, &m_endConditionSize, _bufferSize);	
-	if (result != pz_noErr)
-	{
-		return result;
-	}
+	pktz_err result = allocateBuffer(&m_endCondition, &m_endConditionSize, _bufferSize);	
+	if (result != pz_noErr) return result;
 	
 	// copy bytes
 	memcpy(m_endCondition, _buffer, _bufferSize);
@@ -315,22 +288,22 @@ uint8_t Packetizer::setEndCondition(uint8_t* _buffer, size_t _bufferSize)
 }
 
 
+#ifdef ARDUINO
 //-------------------------------------------------------------------------------
 // send start and end condition
 //-------------------------------------------------------------------------------
-#ifdef ARDUINO
 void Packetizer::sendStartCondition(Print& _print)
 {
-    if (m_startConditionSize > 0) {
-        _print.write(m_startCondition, m_startConditionSize);
-    }
+	if (m_startConditionSize > 0) {
+		_print.write(m_startCondition, m_startConditionSize);
+	}
 }
 
 void Packetizer::sendEndCondition(Print& _print)
 {
-    if (m_endConditionSize > 0) {
-        _print.write(m_endCondition, m_endConditionSize);
-    }
+	if (m_endConditionSize > 0) {
+		_print.write(m_endCondition, m_endConditionSize);
+	}
 }
 #endif
 
@@ -369,13 +342,12 @@ void Packetizer::initVars()
 	m_endCondition = 0;
 	m_endConditionSize = 0;
 	m_endIndex = 0;
-	m_packetEnd = -1;
+	m_packetLen = -1;
 	
 	user_onStart = 0;
 	user_onPacket = 0;
 	user_onOverflow = 0;
 }
-
 
 void Packetizer::freeBuffer(uint8_t** _buffer, size_t* _bufferSize)
 {
@@ -388,27 +360,18 @@ void Packetizer::freeBuffer(uint8_t** _buffer, size_t* _bufferSize)
 	*_bufferSize = 0;
 }
 
-
-uint8_t Packetizer::allocateBuffer(uint8_t** _buffer, size_t* _bufferSize, size_t _size)
+pktz_err Packetizer::allocateBuffer(uint8_t** _buffer, size_t* _bufferSize, size_t _size)
 {
-	// safety
 	if (_size == 0) return pz_bufferSize;
-		
-	
-	// allocate buffer
+
 	*_buffer = (uint8_t*)malloc(_size);
-  
-  	// test
-	if (*_buffer == 0) {
-		return pz_noBuffer;
-	}
 	
-	// set size
+	if (*_buffer == 0) return pz_noBuffer;
+	
 	*_bufferSize = _size;
 	
 	return pz_noErr;
 }
-
 
 void Packetizer::resetBuffer()
 {
