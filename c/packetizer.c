@@ -175,6 +175,17 @@ pktz_err pktz_appendData(struct pktz* pktz, uint8_t data)
 	return pz_noErr;
 }
 
+pktz_err pktz_appendBuf(struct pktz* pktz, const uint8_t* buf, size_t len)
+{
+	pktz_err err = pz_noErr;
+	for (size_t i = 0; i < len; i++) {
+		err = pktz_appendData(pktz, buf[i]);
+		if (err != pz_noErr)
+			return err;
+	}
+	return pz_noErr;
+}
+
 void pktz_setOnPacket(struct pktz* pktz, void (*handler)(uint8_t*, size_t, void*))
 {
 	pktz->user_onPacket = handler;
