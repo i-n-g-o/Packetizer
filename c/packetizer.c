@@ -57,8 +57,12 @@ struct pktz* pktz_init_string(size_t bufSize, const char* startCond, const char*
 	}
 
 	pktz->m_bufferSize = bufSize;
-	pktz->m_startCondition = (uint8_t*)strdup(startCond);
-	pktz->m_startConditionSize = strlen(startCond);
+
+	if (startCond) {
+		pktz->m_startCondition = (uint8_t*)strdup(startCond);
+		pktz->m_startConditionSize = strlen(startCond);
+	}
+
 	pktz->m_endCondition = (uint8_t*)strdup(endCond);
 	pktz->m_endConditionSize = strlen(endCond);
 
