@@ -57,8 +57,12 @@ struct pktz* pktz_init_string(size_t bufSize, const char* startCond, const char*
 	}
 
 	pktz->m_bufferSize = bufSize;
-	pktz->m_startCondition = (uint8_t*)strdup(startCond);
-	pktz->m_startConditionSize = strlen(startCond);
+
+	if (startCond) {
+		pktz->m_startCondition = (uint8_t*)strdup(startCond);
+		pktz->m_startConditionSize = strlen(startCond);
+	}
+
 	pktz->m_endCondition = (uint8_t*)strdup(endCond);
 	pktz->m_endConditionSize = strlen(endCond);
 
@@ -168,6 +172,17 @@ pktz_err pktz_appendData(struct pktz* pktz, uint8_t data)
 		}
 	}
 
+	return pz_noErr;
+}
+
+pktz_err pktz_appendBuf(struct pktz* pktz, const uint8_t* buf, size_t len)
+{
+	pktz_err err = pz_noErr;
+	for (size_t i = 0; i < len; i++) {
+		err = pktz_appendData(pktz, buf[i]);
+		if (err != pz_noErr)
+			return err;
+	}
 	return pz_noErr;
 }
 
