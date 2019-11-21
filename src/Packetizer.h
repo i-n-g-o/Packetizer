@@ -61,6 +61,9 @@ public:
 	int getPacketEnd() { return m_packetLen; }; // deprecated
 	int getPacketLen() { return m_packetLen; };
 
+	// reset
+	void reset();
+
 	// append data
 	pktz_err appendData(int);
 	pktz_err appendData(long);

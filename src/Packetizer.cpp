@@ -58,6 +58,15 @@ pktz_err Packetizer::setBufferSize(size_t _size)
 }
 
 
+void Packetizer::reset()
+{
+	m_index = 0;
+	m_startFound = false;
+	m_startIndex = 0;
+	m_endIndex = 0;
+}
+
+
 //-------------------------------------------------------------------------------
 // append data
 //-------------------------------------------------------------------------------
