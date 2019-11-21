@@ -15,6 +15,7 @@ struct pktz;
 struct pktz* pktz_init_string(size_t bufSize, const char* startCond, const char* endCond);
 void pktz_fini(struct pktz* pktz);
 pktz_err pktz_appendData(struct pktz* pktz, uint8_t data);
+pktz_err pktz_appendBuf(struct pktz* pktz, const uint8_t* buf, size_t len);
 
 void pktz_setOnStart(struct pktz* pktz, void (*)(void*));
 void pktz_setOnPacket(struct pktz* pktz, void (*)(uint8_t*, size_t, void*));
