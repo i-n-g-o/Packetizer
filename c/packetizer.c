@@ -22,7 +22,7 @@
 struct pktz {
 	uint8_t*	m_buffer;
 	size_t		m_bufferSize;
-	int             m_packetLen;
+	int         m_packetLen;
 
 	size_t		m_index; // current index for writing
 	bool		m_startFound;
@@ -171,11 +171,23 @@ pktz_err pktz_appendData(struct pktz* pktz, uint8_t data)
 	return pz_noErr;
 }
 
-void pktz_setOnPacket(struct pktz* pktz, void (*handler)(uint8_t*, size_t, void*))
+// set user callbacks
+void pktz_setOnStart(struct pktz* pktz, void (*start_handler)(void*))
 {
-	pktz->user_onPacket = handler;
+	pktz->user_onStart = start_handler;
 }
 
+void pktz_setOnPacket(struct pktz* pktz, void (*packet_handler)(uint8_t*, size_t, void*))
+{
+	pktz->user_onPacket = packet_handler;
+}
+
+void pktz_setOnOverflow(struct pktz* pktz, void (*overflow_handler)(uint8_t*, size_t, void*))
+{
+	pktz->user_onOverflow = overflow_handler;
+}
+
+// set user data
 void pktz_setUserData(struct pktz* pktz, void* ud)
 {
 	pktz->m_userData = ud;
