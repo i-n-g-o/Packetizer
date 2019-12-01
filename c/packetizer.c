@@ -38,19 +38,19 @@ struct pktz {
 	size_t		m_endIndex;
 
 	// callbacks
-	void		(*user_onStart)(void);
+	void		(*user_onStart)(void*);
 	void		(*user_onPacket)(uint8_t*, size_t, void*);
-	void		(*user_onOverflow)(uint8_t*, size_t);
+	void		(*user_onOverflow)(uint8_t*, size_t, void*);
 	void*		m_userData;
 };
 
 struct pktz* pktz_init_string(size_t bufSize, const char* startCond, const char* endCond)
 {
-	struct pktz* pktz = calloc(1, sizeof(struct pktz));
+	struct pktz* pktz = (struct pktz*)calloc(1, sizeof(struct pktz));
 	if (pktz == NULL)
 		return NULL;
 
-	pktz->m_buffer = malloc(bufSize);
+	pktz->m_buffer = (uint8_t*)malloc(bufSize);
 	if (pktz->m_buffer == NULL) {
 		free(pktz);
 		return NULL;
@@ -111,7 +111,7 @@ pktz_err pktz_appendData(struct pktz* pktz, uint8_t data)
 				pktz->m_startFound = true;
 
 				if (pktz->user_onStart) {
-					pktz->user_onStart();
+					pktz->user_onStart(pktz->m_userData);
 				}
 
 				// don't add character to buffer
@@ -168,7 +168,9 @@ pktz_err pktz_appendData(struct pktz* pktz, uint8_t data)
 
 		// call overflow...
 		if (pktz->user_onOverflow) {
-			pktz->user_onOverflow(pktz->m_buffer, pktz->m_bufferSize);
+			pktz->user_onOverflow(pktz->m_buffer,
+                                  pktz->m_bufferSize,
+                                  pktz->m_userData);
 		}
 	}
 
@@ -190,21 +192,33 @@ pktz_err pktz_appendBuf(struct pktz* pktz, const uint8_t* buf, size_t len)
 // set user callbacks
 void pktz_setOnStart(struct pktz* pktz, void (*start_handler)(void*))
 {
+    if (pktz == NULL)
+		return;
+
 	pktz->user_onStart = start_handler;
 }
 
 void pktz_setOnPacket(struct pktz* pktz, void (*packet_handler)(uint8_t*, size_t, void*))
 {
+    if (pktz == NULL)
+		return;
+
 	pktz->user_onPacket = packet_handler;
 }
 
 void pktz_setOnOverflow(struct pktz* pktz, void (*overflow_handler)(uint8_t*, size_t, void*))
 {
+    if (pktz == NULL)
+		return;
+
 	pktz->user_onOverflow = overflow_handler;
 }
 
 // set user data
 void pktz_setUserData(struct pktz* pktz, void* ud)
 {
+    if (pktz == NULL)
+		return;
+
 	pktz->m_userData = ud;
 }
